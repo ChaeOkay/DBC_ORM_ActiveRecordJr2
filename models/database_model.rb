@@ -24,6 +24,29 @@ module Database
       record
     end
 
+    def self.all
+      class_table = self.to_s.downcase + "s"
+      Database::Model.execute("SELECT * FROM #{class_table}").map do |row|
+        self.new(row)
+      end
+    end
+
+    def self.where(query, *args)
+      class_table = self.to_s.downcase + "s"
+      Database::Model.execute("SELECT * FROM #{class_table} WHERE #{query}", *args).map do |row|
+        self.new(row)
+      end
+    end
+
+    def self.find(pk)
+      self.where('id = ?', pk).first
+    end
+
+    def new_record?
+      self[:id].nil?
+    end
+
+
     def save
       if new_record?
         results = insert!
@@ -129,5 +152,6 @@ module Database
           value
         end
       end
+
   end
 end

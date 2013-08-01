@@ -1,22 +1,6 @@
 class Cohort < Database::Model
   attr_reader :attributes, :old_attributes
 
-  def self.all
-    Database::Model.execute("SELECT * FROM cohorts").map do |row|
-      Cohort.new(row)
-    end
-  end
-
-  def self.where(query, *args)
-    Database::Model.execute("SELECT * FROM cohorts WHERE #{query}", *args).map do |row|
-      Cohort.new(row)
-    end
-  end
-
-  def self.find(pk)
-    self.where('id = ?', pk).first
-  end
-
   self.attribute_names = [:id, :name, :created_at, :updated_at]
 
   def students
@@ -31,11 +15,9 @@ class Cohort < Database::Model
     students
   end
 
-  def new_record?
-    self[:id].nil?
-  end
 
   private
+
     def insert!
       self[:created_at] = DateTime.now
       self[:updated_at] = DateTime.now
